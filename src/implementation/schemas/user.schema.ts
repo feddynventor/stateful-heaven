@@ -1,34 +1,35 @@
 import { FastifySchema } from "fastify";
 import { FromSchema } from "json-schema-to-ts";
-import { type User } from "../../core/entities/user";
-
-const getUserParams = {
-    type: "object",
-    properties: {
-        id: { type: "string" },
-    },
-    required: ["id"],
-} as const;
-export type GetUserParams = FromSchema<typeof getUserParams>;
-
-export const getUserSchema: FastifySchema = {
-    description: 'Ritorna utente da id',
-    tags: ['users'],
-    querystring: getUserParams
-}
 
 const newUserParams = {
     type: "object",
     properties: {
-        cf: { type: "string"},
-        fullname: { type: "string" }
+        cf: { type: "string", minLength: 16, maxLength: 16 },
+        password: { type: "string", minLength: 8 },
+        fullname: { type: "string", minLength: 3 }
     },
-    required: ["cf","fullname"],
+    required: ["cf","password","fullname"],
 } as const;
 export type NewUserParams = FromSchema<typeof newUserParams>
 
 export const newUserSchema: FastifySchema = {
     description: 'Aggiungi nuovo utente',
-    tags: ['users'],
+    tags: ['login'],
     body: newUserParams
+}
+
+const verifyUserParams = {
+    type: "object",
+    properties: {
+        cf: { type: "string", minLength: 16, maxLength: 16 },
+        password: { type: "string", minLength: 8 }
+    },
+    required: ["cf","password"],
+} as const;
+export type VerifyUserParams = FromSchema<typeof verifyUserParams>;
+
+export const verifyUserSchema: FastifySchema = {
+    description: 'Login e Ritorna token JWT',
+    tags: ['login'],
+    body: verifyUserParams
 }

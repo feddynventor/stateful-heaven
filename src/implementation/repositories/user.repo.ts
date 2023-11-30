@@ -5,31 +5,44 @@ import { db } from "../../core/database/connect";
 import { users } from "../../core/database/schema";
 
 import { eq } from "drizzle-orm";
+import { generate, verify } from "password-hash";
 
 export class UserRepository implements IUserRepository {
-    async createUser(user: UserPayload): Promise<boolean | null> {
+    async createUser(u: User): Promise<boolean> {
         return db
         .insert(users)
-        .values({cf: user.cf, fullname: user.fullname})
+        .values({
+            cf: u.cf,
+            password: generate(u.password),
+            fullname: u.fullname
+        })
         .then(res => {
             if (res.rowCount==1) return true
             else return false
         })
         .catch(err => {
-            throw new Error()
+            throw new Error(err)
         })
     }
 
-    async getUser(id: string): Promise<User | null> {
+    async verifyUser(u: User): Promise<UserPayload> {
         return db
-        .select({fullname: users.fullname, cf:users.cf})
-        .from(users)
-        .where(eq(users.uuid, id))
+        .select({
+            password: users.password,
+            fullname: users.fullname,
+            cf: users.cf,
+            // ...
+        })
+        .from(users).where(eq(users.cf, u.cf))
         .then(res => {
-            return res[0] as UserPayload
+            if (verify(u.password, res[0].password)){
+                const { password, ...rest} = res[0];
+                return rest as UserPayload
+            } else
+                throw new Error("Password errata")
         })
         .catch(err => {
-            return null
+            throw new Error(err)
         })
     }
 }

@@ -1,6 +1,7 @@
 export interface User {
   uuid: string
-  fullname?: string | null
-  cf?: string | null
+  password: string
+  fullname: string
+  cf: string
 };
-export type UserPayload = Omit<User, 'id'>
+export type UserPayload = Omit<User, 'uuid'|'password'>

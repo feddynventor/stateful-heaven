@@ -11,14 +11,17 @@
   "author": "Fedele Cavaliere",
   "license": "ISC",
   "dependencies": {
+    "@fastify/jwt": "^7.2.4",
     "@fastify/swagger": "^8.12.0",
     "@fastify/swagger-ui": "^1.10.1",
     "@fastify/type-provider-json-schema-to-ts": "^2.2.2",
+    "@types/password-hash": "^1.2.24",
     "@types/pg": "^8.10.9",
     "drizzle-orm": "^0.29.0",
     "fastify": "^4.24.3",
     "fastify-plugin": "^4.5.1",
     "json-schema-to-ts": "^2.9.2",
+    "password-hash": "^1.2.2",
     "pg": "^8.11.3"
   },
   "devDependencies": {

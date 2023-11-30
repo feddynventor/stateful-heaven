@@ -1,35 +1,42 @@
-import { FastifyRequest, FastifyReply } from "fastify"
+import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify"
 
-import { UserPayload } from "../../core/entities/user"
+import { User } from "../../core/entities/user"
 import { IUserRepository } from "../../core/interfaces/user.iface"
 
-import { GetUserParams } from "../schemas/user.schema"
+export const verifyUser = (
+    userRepository: IUserRepository,
+    server: FastifyInstance
+) => async function (request: FastifyRequest, reply: FastifyReply) {
+    await userRepository
+        .verifyUser( request.body as User )
+        .then(res => {
+        if (res) reply.status(200)
+            .send({ token: server.jwt.sign({
+                payload: {uuid: (request.body as User).uuid},
+                user: {uuid: (request.body as User).uuid, ...res}
+            }) })
+        else
+            reply.status(401)
+        })
+        .catch(err => {
+            reply.status(400).send(err)
+        })
+}
+
+export const whoami = 
+() => async function (request: FastifyRequest, reply: FastifyReply) {
+    reply.status(200).send( request.user )
+}
 
 export const createUser = (
     userRepository: IUserRepository
 ) => async function (request: FastifyRequest, reply: FastifyReply) {
     await userRepository
-        .createUser(request.body as UserPayload)
+        .createUser(request.body as User)
         .then(res => {
             reply.status(201)
         })
         .catch(err => {
-            reply.status(503).send(err)
-        })
-}
-
-export const getUser = (
-    userRepository: IUserRepository
-) => async function (
-    request: FastifyRequest,
-    reply: FastifyReply) {
-    await userRepository
-        .getUser( (request.query as GetUserParams).id )
-        .then(res => {
-            if (res) reply.status(200).send(res)
-            else reply.status(404)
-        })
-        .catch(err => {
-            reply.status(500)
+            reply.status(400).send(err)
         })
 }
