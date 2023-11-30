@@ -11,7 +11,8 @@ export const userRoutes = (userRepository: IUserRepository): RouteOptions[] => (
     url: '/me',
     schema: {
       description: "Mostra dettagli utente loggato",
-      tags: ["login"]
+      tags: ["user"],
+      security: [{ Bearer: [] }],
     },
     handler: whoami()
   }
