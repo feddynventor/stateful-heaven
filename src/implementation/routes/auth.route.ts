@@ -16,6 +16,6 @@ export const authRoutes = (userRepository: IUserRepository, server: FastifyInsta
     method: 'POST',
     url: '/signup',
     schema: newUserSchema,
-    handler: createUser(userRepository)
+    handler: createUser(userRepository, server)
   }
 ])

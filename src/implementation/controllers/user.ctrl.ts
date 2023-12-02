@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify"
 
-import { User } from "../../core/entities/user"
+import { User, UserPayload } from "../../core/entities/user"
 import { IUserRepository } from "../../core/interfaces/user.iface"
 
 export const verifyUser = (
@@ -29,12 +29,20 @@ export const whoami =
 }
 
 export const createUser = (
-    userRepository: IUserRepository
+    userRepository: IUserRepository,
+    server: FastifyInstance
 ) => async function (request: FastifyRequest, reply: FastifyReply) {
     await userRepository
         .createUser(request.body as User)
-        .then(res => {
-            reply.status(201)
+        .then(async (res) => {
+            if (res) reply.status(200)
+                .send({ token: server.jwt.sign({
+                    payload: {uuid: res},
+                    user: request.body as UserPayload
+                }) })
+            else
+                reply.status(401)
+            
         })
         .catch(err => {
             reply.status(400).send(err)

@@ -8,7 +8,7 @@ import { eq } from "drizzle-orm";
 import { generate, verify } from "password-hash";
 
 export class UserRepository implements IUserRepository {
-    async createUser(u: User): Promise<boolean> {
+    async createUser(u: User): Promise<string> {
         return db
         .insert(users)
         .values({
@@ -16,9 +16,11 @@ export class UserRepository implements IUserRepository {
             password: generate(u.password),
             fullname: u.fullname
         })
+        .returning({
+            insertedId: users.uuid
+        })
         .then(res => {
-            if (res.rowCount==1) return true
-            else return false
+            return res[0].insertedId
         })
         .catch(err => {
             throw new Error(err)
