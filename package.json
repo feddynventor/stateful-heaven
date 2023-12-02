@@ -6,7 +6,8 @@
   "scripts": {
     "push": "./node_modules/drizzle-kit/bin.cjs push:pg",
     "migrate": "./node_modules/drizzle-kit/bin.cjs migrate:pg",
-    "dev": "node_modules/nodemon/bin/nodemon.js index.ts"
+    "dev": "./node_modules/nodemon/bin/nodemon.js index.ts",
+    "build": "tsc -p ./tsconfig.json"
   },
   "author": "Fedele Cavaliere",
   "license": "ISC",
