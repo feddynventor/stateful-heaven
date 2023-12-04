@@ -1,22 +1,24 @@
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify"
 
-import { User, UserPayload } from "../../core/entities/user"
+import { UserPayload } from "../../core/entities/user"
 import { IUserRepository } from "../../core/interfaces/user.iface"
+import { NewUserParams, VerifyUserParams } from "../schemas/user.schema"
 
 export const verifyUser = (
     userRepository: IUserRepository,
     server: FastifyInstance
 ) => async function (request: FastifyRequest, reply: FastifyReply) {
     await userRepository
-        .verifyUser( request.body as User )
-        .then(res => {
-        if (res) reply.status(200)
-            .send({ token: server.jwt.sign({
-                payload: {uuid: (request.body as User).uuid},
-                user: {uuid: (request.body as User).uuid, ...res}
-            }) })
-        else
-            reply.status(401)
+    .verifyUser( request.body as VerifyUserParams )
+    .then(res => {
+            const {uuid, ...rest} = res;
+            if (res) reply.status(200)
+                .send({ token: server.jwt.sign({
+                    payload: {uuid},
+                    user: rest
+                }) })
+            else
+                reply.status(401)
         })
         .catch(err => {
             reply.status(400).send(err)
@@ -33,7 +35,7 @@ export const createUser = (
     server: FastifyInstance
 ) => async function (request: FastifyRequest, reply: FastifyReply) {
     await userRepository
-        .createUser(request.body as User)
+        .createUser( request.body as NewUserParams )
         .then(async (res) => {
             if (res) reply.status(200)
                 .send({ token: server.jwt.sign({

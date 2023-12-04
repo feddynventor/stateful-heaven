@@ -1,7 +1,7 @@
-import { QueryResult } from 'pg'
-import { User, UserPayload } from '../entities/user'
+import { UserTokenVerification } from '../entities/user'
+import { NewUserParams, VerifyUserParams } from '../../implementation/schemas/user.schema'
 
 export interface IUserRepository {
-  createUser: (u: User) => Promise<string>
-  verifyUser: (u: User) => Promise<UserPayload | null>
+  createUser: (u: NewUserParams) => Promise<string>
+  verifyUser: (u: VerifyUserParams) => Promise<UserTokenVerification>
 }

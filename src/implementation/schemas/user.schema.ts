@@ -1,14 +1,16 @@
 import { FastifySchema } from "fastify";
 import { FromSchema } from "json-schema-to-ts";
+import { userRoles } from "../../core/database/schema";
 
 const newUserParams = {
     type: "object",
     properties: {
         cf: { type: "string", minLength: 16, maxLength: 16 },
         password: { type: "string", minLength: 8 },
-        fullname: { type: "string", minLength: 3 }
+        fullname: { type: "string", minLength: 3 },
+        role: { enum: userRoles.enumValues }
     },
-    required: ["cf","password","fullname"],
+    required: ["cf","password","fullname","role"],
 } as const;
 export type NewUserParams = FromSchema<typeof newUserParams>
 
