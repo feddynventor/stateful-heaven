@@ -1,12 +1,19 @@
 import { Role, UserPayload } from "../../core/entities/user";
-import { IUserRepository } from "../../core/interfaces/user.iface";
 
-import { db } from "../../database/connect";
-import { users } from "../../database/schema";
+import { db } from "../connect";
+import { users } from "../schema";
 
 import { eq, sql } from "drizzle-orm";
 import { generate, verify } from "password-hash";
-import { NewUserParams, VerifyUserParams } from "../../core/schemas/user.schema";
+import { NewUserParams, VerifyUserParams } from "../../implementation/schemas/user.schema";
+
+export interface IUserRepository {
+  getUser: (user_id: string) => Promise<UserPayload>
+  deleteUser: (user_id: string, farmacia_uuid?: string) => Promise<void>
+  createUser: (u: NewUserParams) => Promise<string>
+  verifyUser: (u: VerifyUserParams) => Promise<string>
+  listUsers: () => Promise<UserPayload[]>
+}
 
 export class UserRepository implements IUserRepository {
     async createUser(u: NewUserParams): Promise<string> {

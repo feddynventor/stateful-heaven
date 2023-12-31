@@ -2,9 +2,9 @@ import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify"
 
 import { UserPayload, UserToken } from "../../core/entities/user"
 
-import { IUserRepository } from "../../core/interfaces/user.iface"
+import { IUserRepository } from "../../core/repositories/user.repo"
 
-import { NewUserParams, VerifyUserParams } from "../../core/schemas/user.schema"
+import { NewUserParams, VerifyUserParams } from "../schemas/user.schema"
 
 export const verifyUser = (
     userRepository: IUserRepository,

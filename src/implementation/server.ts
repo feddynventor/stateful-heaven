@@ -6,7 +6,7 @@ import docs from './helpers/docs'
 import { userRoutes } from './routes/user.route'
 import { authRoutes } from './routes/auth.route'
 
-import { UserRepository } from './repositories/user.repo'
+import { UserRepository } from '../core/repositories/user.repo'
 import { User, UserToken } from '../core/entities/user'
 
 export const createServer = async (basePath: string): Promise<FastifyInstance> => {
