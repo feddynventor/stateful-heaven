@@ -5,7 +5,7 @@ dotenv.config();  // Load environment variables from .env file
 // https://orm.drizzle.team/kit-docs/conf
 
 export default {
-  schema: './src/core/database/schema.ts',
+  schema: './src/database/schema.ts',
   out: './migrations',
   dbCredentials: {
     //drizzle-toolkit entrypoint
