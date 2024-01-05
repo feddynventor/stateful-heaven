@@ -14,13 +14,15 @@ export const authRoutes = (userRepository: IUserRepository, server: FastifyInsta
     schema: verifyUserSchema,
     preHandler: verifyUser(userRepository, server),
     handler: (request, reply) => {
-      console.log(reply.payload, reply.statusCode)
       if (reply.statusCode !== 200)
         reply.html( ui.loginForm() )
       else
         reply
-          .trigger('user_logged_state')
-          .redirect(302, request.cookies['lastResource']||'/users/me')
+          .trigger('user_logged_state')  //TODO trigger not working for 302
+          .redirect(302, 
+            request.cookies['lastResource']!='/api/auth/logout' 
+            ? request.cookies['lastResource']||'/users/me' 
+            : '/users/me')
         // `lastResource` settato ad ogni richiesta con successo 200
     }
   },{
