@@ -5,13 +5,17 @@ import cookie from '@fastify/cookie'
 import { JsonSchemaToTsProvider } from '@fastify/type-provider-json-schema-to-ts'
 import docs from './helpers/docs'
 
-import { User, UserToken } from '../core/entities/user'
+import { Role, User, UserToken } from '../core/entities/user'
 import * as ui from './renderer/user.ui'
 
 import { userRoutes } from './routes/user.route'
 import { authRoutes } from './routes/auth.route'
+import { postsRoutes } from './routes/posts.route'
 
 import { UserRepository } from '../core/repositories/user.repo'
+import { PostsRepository } from '../wordpress/repositories/posts.repo'
+import { AuthorsRepository } from '../wordpress/repositories/authors.repo'
+import { MediaRepository } from '../wordpress/repositories/media.repo'
 
 declare module 'fastify' {
   export interface FastifyReply {
@@ -20,6 +24,9 @@ declare module 'fastify' {
     commit(): FastifyReply
     html(body: string, originalUrl?:string): FastifyReply
     trigger(event: string): FastifyReply
+  }
+  export interface RouteOptions {
+    allowedUser?: Role
   }
 }
 
@@ -38,12 +45,12 @@ export const createServer = async (basePath: string): Promise<FastifyInstance> =
   })
   server.decorateReply('html', function(this: FastifyReply, body: string, originalUrl?: string) {
     this.header('Content-Type', 'text/html')
-    if (this.statusCode === 200)
+    // non-200 responses are sent immediately as JSON
+    // error parsing on the client
+    // if (this.statusCode === 200) 
       return this
         .setCookie("lastResource", this.request.originalUrl)
         .send(body)
-    else
-      return this.send(this.payload.message)  //.message comes from Error Type
   })
   server.decorateReply('trigger', function(this: FastifyReply, event: string) {
     return this.header("HX-Trigger-After-Swap",event)
@@ -125,6 +132,12 @@ export const createServer = async (basePath: string): Promise<FastifyInstance> =
       // HTMX renderer
       if (route.preHandler) {
         server.register((fastify, opts, next) => {
+          route.preValidation = (request, reply, done) => {
+            console.log(request.user)
+            if (route.allowedUser == undefined) return done()
+            if (request.user && parseInt((request.user as UserToken).user.role.toString()) <= route.allowedUser) return done()
+            else return reply.status(403).send({message: "Non hai i permessi necessari"})
+          }
           fastify.route(route);
           next();
         }, { prefix: basePath+endpoint });

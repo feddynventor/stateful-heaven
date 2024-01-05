@@ -1,5 +1,6 @@
 import { type RouteOptions } from 'fastify'
 
+import { Role } from '../../core/entities/user'
 import { deleteUser, listUsers, whoami } from '../controllers/user.ctrl'
 import { IUserRepository } from '../../core/repositories/user.repo'
 
@@ -33,6 +34,7 @@ export const userRoutes = (userRepository: IUserRepository): RouteOptions[] => (
   },{
     method: 'GET',
     url: '/',
+    allowedUser: Role.ADMIN,
     schema: {
       description: "Lista utenti",
       tags: ["user"],
