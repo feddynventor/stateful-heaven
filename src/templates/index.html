@@ -1,0 +1,55 @@
+<html lang="en">
+    <head>
+        <title>Fastify HTMX CMS</title>
+        <script src="src/htmx.min.js"></script>
+        <script src="src/json-enc.js"></script>
+
+        <link href="src/bootstrap41.min.css" rel="stylesheet">
+        <link href="src/sticky-footer-navbar.css" rel="stylesheet">
+        <link rel="icon" href="data:;base64,=">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="htmx-config" content='{"withCredentials":true}'>
+        <script>
+            window.addEventListener("htmx:responseError", function(e) {
+                error = e.detail.xhr.response;
+                console.log("INFO",JSON.parse(error).message); //TODO toast
+            });
+        </script>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+            <a class="navbar-brand" href="#"><!-- <img src="src/logo.png" height="36px"> --></a>
+            <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse" id="navbarCollapse">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a hx-get="/users/me" hx-target="#content" class="nav-link" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a hx-get="/users" hx-target="#content" class="nav-link" href="#">Home</a>
+                    </li>
+                </ul>
+                <div class="text-light" hx-get="/users/me" hx-select="#userinfo" hx-swap="innerHTML" hx-trigger="load, user_logged_state">
+                </div>
+            </div>
+        </nav>
+        <main
+            role="main" class="container" id="content"
+            hx-get="/users/me" hx-swap="innerHTML" hx-trigger="load"></main>
+        <footer class="footer">
+            <div class="container">
+                <span class="text-muted">Nice feet</span>
+            </div>
+        </footer>
+
+        <!-- <script src="src/jquery-3.3.1.slim.min.js"></script> -->
+        <!-- <script src="https://getbootstrap.com/docs/4.1/dist/js/bootstrap.min.js"></script> -->
+        <!-- <script src="src/bootstrap.min.js"></script> -->
+        <!-- <script src="https://getbootstrap.com/docs/4.1/assets/js/vendor/popper.min.js"></script> -->
+        <!-- <script src="src/popper.min.js"></script> -->
+    </body>
+</html>
+

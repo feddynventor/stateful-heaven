@@ -3,6 +3,8 @@ import { type RouteOptions } from 'fastify'
 import { deleteUser, listUsers, whoami } from '../controllers/user.ctrl'
 import { IUserRepository } from '../../core/repositories/user.repo'
 
+import * as ui from '../renderer/user.ui'
+
 export const userRoutes = (userRepository: IUserRepository): RouteOptions[] => ([
   {
     method: 'GET',
@@ -12,7 +14,13 @@ export const userRoutes = (userRepository: IUserRepository): RouteOptions[] => (
       tags: ["user"],
       security: [{ Bearer: [] }],
     },
-    handler: whoami()
+    preHandler: whoami(),
+    handler: (request, reply) => {
+      if (reply.statusCode !== 200)
+        reply.html( ui.loginForm() )
+      else
+        reply.html( ui.userInfo(reply.payload) )
+    }
   },{
     method: 'DELETE',
     url: '/',
@@ -30,6 +38,9 @@ export const userRoutes = (userRepository: IUserRepository): RouteOptions[] => (
       tags: ["user"],
       security: [{ Bearer: [] }],
     },
-    handler: listUsers(userRepository)
+    preHandler: listUsers(userRepository),
+    handler: (request, reply) => {
+      reply.html( ui.usersList(reply.payload) )
+    }
   }
 ])
