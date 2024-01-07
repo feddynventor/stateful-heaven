@@ -52,8 +52,11 @@ A toast-like message may be displayed.
 
 ## Clean Architecture Design
 ### Data sources
+`src/` contains `implementation/` for managing the Fastify instance, and `templates/` which (for now) contains bare HTML files
 
-> Each of these contains **types**, like `entities` and **classes** like `repositories`
+Then the backend logic:
+
+> Each of these contains **types** like `entities` and **classes** like `repositories`
 
 - core/
 - web-crawler/
